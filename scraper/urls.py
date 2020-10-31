@@ -1,9 +1,10 @@
 from django.conf.urls import url
 from django.urls import path
 
+from . import views
 from .views import *
 
 
 urlpatterns = [
-    path('', main_page, name='main_page'),
+    path('repository/', views.RepositoryView.as_view()),
 ]
