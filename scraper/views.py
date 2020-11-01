@@ -8,6 +8,7 @@ from .serializers import ScrapedDataSerializer
 
 class RepositoryView(APIView):
     """Вывод данных репозитория"""
+
     def get(self, request):
         url = Repository.objects.all()
         serializer = ScrapedDataSerializer(url, many=True)
