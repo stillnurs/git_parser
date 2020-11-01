@@ -1,10 +1,12 @@
+import asyncio
+from aiohttp import ClientSession
+from bs4 import BeautifulSoup
 from rest_framework import serializers
-
-from .models import *
+from .ascrape import scraper
 
 
 class ScrapedDataSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Repository
-        fields = ('url',)
+        model = asyncio.run(scraper())
+        fields = ('commits',)
