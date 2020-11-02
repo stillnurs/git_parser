@@ -4,4 +4,9 @@ from .models import *
 
 @admin.register(Repository)
 class RepositoryAdmin(admin.ModelAdmin):
-    list_display = ['url']
+    list_display = ['title', 'url']
+
+
+@admin.register(Commits)
+class CommitsAdmin(admin.ModelAdmin):
+    list_display = ['title', 'message', 'timestamp', 'date']

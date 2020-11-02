@@ -35,5 +35,5 @@ async def scraper():
                 return commits
 
 
-committed_data = asyncio.run(scraper())
-print(committed_data)
+# committed_data = asyncio.run(scraper())
+# print(committed_data)
