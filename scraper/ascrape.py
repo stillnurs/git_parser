@@ -5,7 +5,7 @@ from asyncio import Semaphore
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
-from ...models import *
+from .models import *
 
 
 class Scraper:
