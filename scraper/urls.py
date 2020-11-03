@@ -6,5 +6,5 @@ from .views import *
 
 
 urlpatterns = [
-    path('repository/', views.RepositoryView.as_view()),
+    path('', views.CommitsView.as_view()),
 ]

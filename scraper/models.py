@@ -1,16 +1,14 @@
 from django.db import models
-from django.db.models import F
-from django.db.models.functions import Concat
 
 
 class Repository(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, db_index=True)
     url = models.URLField()
 
-    def append(self):
-        new_id = self.id
-        self.string_id = str(new_id) + '/commits'
-        super(Repository, self).save()
+    # def append(self):
+    #     new_id = self.id
+    #     self.string_id = str(new_id) + '/commits'
+    #     super(Repository, self).save()
 
     class Meta:
         verbose_name = "Репозиторий"
@@ -21,8 +19,8 @@ class Repository(models.Model):
 
 
 class Commits(models.Model):
-    title = models.CharField(max_length=255)
-    message = models.TextField()
+    title = models.CharField(max_length=255, db_index=True)
+    message = models.TextField(db_index=True)
     timestamp = models.CharField(max_length=255)
     date = models.DateTimeField(auto_now_add=True)
 

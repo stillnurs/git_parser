@@ -1,10 +1,10 @@
-import asyncio
 from rest_framework import serializers
-from .ascrape import scraper
+
+from .models import Commits
 
 
 class ScrapedDataSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = asyncio.run(scraper())
-        fields = ('commits',)
+        model = Commits
+        fields = '__all__'  # importing all fields
