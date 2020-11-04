@@ -18,6 +18,8 @@ class CommitsView(APIView):
         return Response(serializer.data)
 
 
-async def runner():
-    results = await asyncio.run(Scraper.main())
-    return results
+class GetCommits:
+
+    def commits_scraper(self):
+        results = Scraper()
+        return results
