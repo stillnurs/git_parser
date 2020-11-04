@@ -1,4 +1,4 @@
-
+import asyncio
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -6,15 +6,18 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import ScrapedDataSerializer
 
+from .ascrape import Scraper
+
 
 class CommitsView(APIView):
     """Вывод данных репозитория"""
-    def __int__(self):
-        self.queryset = Commits.objects.all()
-        self.serializer = ScrapedDataSerializer(self.queryset, many=True)
 
-    def get(self, request):
-        return Response(self.serializer.data)
-
+    def get(self, request, *args, **kwargs):
+        queryset = Commits.objects.all()
+        serializer = ScrapedDataSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
+async def runner():
+    results = await asyncio.run(Scraper.main())
+    return results

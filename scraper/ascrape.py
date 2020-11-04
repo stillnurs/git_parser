@@ -8,12 +8,15 @@ from bs4 import BeautifulSoup
 from .models import *
 
 
+# obvious class Scraper
 class Scraper:
     def __init__(self):
         self.header = {'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
                        'Chrome/86.0.4240.111 Safari/537.36'}
         self.urls = Repository.objects.all()
         self.sem = Semaphore(10)
+
+    # asynchronous function to fetch our urls from models.
 
     async def fetch(self):
         async with ClientSession() as session:
@@ -22,6 +25,14 @@ class Scraper:
                 async with session.get(url, headers=self.header) as response:
                     html_body = await response.read()
             return {'body': html_body}
+
+    # same fetch() function but with Semaphore
+    """
+    The value of these semaphores is that they allow us 
+    to protect resources from being overused.
+    """
+
+    # and parsing data we need with bs4
 
     async def fetch_with_sem(self):
         async with self.sem:
@@ -42,13 +53,16 @@ class Scraper:
                     'timestamp': timestamp,
                 })
                 await Commits.objects.bulk_create(commitframe)
+                print(commitframe)
+
+    # async function main creates asynchronous task
 
     async def main(self):
         tasks = [asyncio.create_task(
-            self.fetch_with_sem())]
+            self.fetch()), await self.fetch_with_sem()]
         content = await asyncio.gather(*tasks)
         return content
 
-    def runner(self):
-        results = asyncio.run(self.main())
-        return results
+
+# if __name__ == '__main__':
+#     Scraper.runner()
