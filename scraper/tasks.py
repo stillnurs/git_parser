@@ -1,4 +1,5 @@
 from celery import shared_task
+
 import asyncio
 import pandas as pd
 
@@ -8,24 +9,7 @@ from bs4 import BeautifulSoup
 
 from .models import *
 
-header = {'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
-          'Chrome/86.0.4240.111 Safari/537.36'}
-urls = Repository.objects.all()
-sem = Semaphore(10)
-
-
-@shared_task
-# asynchronous function to fetch our urls from models.
-async def fetch():
-    async with ClientSession() as session:
-        for url in urls:
-            f'{url}/commits'
-            async with session.get(url, headers=header) as response:
-                html_body = await response.read()
-        return {'body': html_body}
-
-
-# same fetch() function but with Semaphore
+# fetch function with Semaphore
 """
 The value of these semaphores is that they allow us 
 to protect resources from being overused.
@@ -33,35 +17,49 @@ to protect resources from being overused.
 
 
 # and parsing data we need with bs4
-@shared_task
+# @shared_task
 async def fetch_with_sem():
-    global sem
+    title = []
+    message = []
+    timestamp = []
+    header = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                            'Chrome/86.0.4240.111 Safari/537.36'}
+    urls = ('https://github.com/stillnurs/myshop', 'https://github.com/realpython/Picha')
+    sem = Semaphore(10)
     async with sem:
-        async with BeautifulSoup(fetch(), 'html.parser') as soup:
-            content = soup.find_all('div', class_='TimelineItem--condensed')
+        async with ClientSession() as session:
+            for url in urls:
+                url = f'{url}{"/commits"}'
+                async with session.get(url, headers=header) as response:
+                    html_body = await response.read()
+                    soup = BeautifulSoup(html_body, 'html.parser')
+                content = soup.find_all('div', class_='flex-auto min-width-0')
 
-            for data in content:
-                title = ''.join(set(name.text for name in data.find_all(
-                    'span', class_='commit-author ' 'user-mention')))
+                for data in content:
+                    title.append(data.find('div', class_='f6 text-gray min-width-0').
+                                 find('a', class_='commit-author ''user-mention').get_text().strip('')
+                                 if data.find('a', class_='commit-author user-mention') else None)
 
-                message = data.p.find('a', class_='link-gray-dark').get_text()
+                    message.append(data.find('a', class_='link-gray-dark').get_text()
+                                   if data.find('a', class_='link-gray-dark') else None)
 
-                timestamp = data.find('h2').get_text()
+                    timestamp.append(data.find('relative-time', class_='no-wrap').get_text()
+                                     if data.find('relative-time', class_='no-wrap') else None)
 
-            commitframe = pd.DataFrame({
-                'title': title,
-                'message': message,
-                'timestamp': timestamp,
-            })
-            await Commits.objects.bulk_create(commitframe)
-            print(commitframe)
+        commitframe = pd.DataFrame({
+            'title': title,
+            'message': message,
+            'timestamp': timestamp,
+        })
+
+        return commitframe
 
 
 # async function main creates asynchronous task
-@shared_task
 async def main():
-    tasks = [asyncio.create_task(
-        fetch()), await fetch_with_sem()]
-    content = await asyncio.gather(*tasks)
-    print(content)
-    return content
+    tasks = asyncio.create_task(
+        fetch_with_sem())
+    await asyncio.gather(tasks)
+
+
+asyncio.run(main())

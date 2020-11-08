@@ -18,8 +18,8 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
-    'every-15-seconds': {
-        'task': 'scraper.tasks.scrape_commits',
+   'every-10-seconds': {
+        'task': 'scraper.tasks.fetch_with_sem',
         'schedule': 10,
     }
 }
