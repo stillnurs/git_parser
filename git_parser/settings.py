@@ -127,10 +127,9 @@ STATIC_URL = '/static/'
 
 # CELERY STUFF
 CELERY_RESULT_BACKEND = 'django-db'
-CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_CACHE_BACKEND = 'redis://localhost:6379'
 CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['pickle/json']
+CELERY_ACCEPT_CONTENT = ['pickle', 'json']
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_TIMEZONE = 'Asia/Bishkek'
-

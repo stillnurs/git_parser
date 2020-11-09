@@ -19,7 +19,7 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
    'every-10-seconds': {
-        'task': 'scraper.tasks.fetch_with_sem',
+        'task': 'scraper.tasks.task_scraper',
         'schedule': 10,
     }
 }
