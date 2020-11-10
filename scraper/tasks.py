@@ -3,7 +3,12 @@ from datetime import time
 import time
 
 from celery import shared_task
-from .asyncraper import runner, save_data
+from .asyncraper import runner, save_data, get_url
+
+
+@shared_task
+def list_of_urls():
+    return get_url()
 
 
 @shared_task

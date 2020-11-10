@@ -18,21 +18,24 @@ to protect resources from being overused.
 # and parsing data we need with bs4
 
 commitframe = []
+list_of_urls = []
+print(list_of_urls)
 
 
-# title = []
-# message = []
-# timestamp = []
+def get_url():
+    urls = [field for field in Repository.objects.values_list('url', flat=True)]
+    for url in urls:
+        list_of_urls.append(url)
 
 
 async def fetch_with_sem():
     header = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
                             'Chrome/86.0.4240.111 Safari/537.36'}
-    urls = ('https://github.com/realpython/Picha',)
+
     sem = Semaphore(10)
     async with sem:
         async with ClientSession() as session:
-            for url in urls:
+            for url in list_of_urls:
                 url = f'{url}{"/commits"}'
                 async with session.get(url, headers=header) as response:
                     html_body = await response.read()
@@ -58,7 +61,6 @@ async def fetch_with_sem():
                     print('---> First dict --->', df)
 
                     commitframe.append(df)
-    print('---> Second dict --->', commitframe)
 
 
 async def runner():

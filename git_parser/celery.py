@@ -1,6 +1,7 @@
 import os
 
 from celery import Celery
+from celery.schedules import crontab
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'git_parser.settings')
@@ -16,16 +17,19 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
-
 app.conf.beat_schedule = {
-   'every-10-seconds': {
-        'task': 'scraper.tasks.task_scraper',
+    'get-list-urls': {
+        'task': 'scraper.tasks.list_of_urls',
         'schedule': 10,
     },
-   'every-12-seconds': {
-        'task': 'scraper.tasks.save_to_db',
+    'run-main-task-scraper': {
+        'task': 'scraper.tasks.task_scraper',
         'schedule': 12,
-    }
+    },
+    'run-task-save-data-to-db': {
+        'task': 'scraper.tasks.save_to_db',
+        'schedule': 14,
+    },
 }
 
 
