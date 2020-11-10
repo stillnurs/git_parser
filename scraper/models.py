@@ -19,9 +19,9 @@ class Repository(models.Model):
 
 
 class Commits(models.Model):
-    title = models.CharField(max_length=255, db_index=True)
-    message = models.TextField(db_index=True)
-    timestamp = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, db_index=True, null=True)
+    message = models.TextField(db_index=True, null=True)
+    timestamp = models.CharField(max_length=255, null=True)
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:

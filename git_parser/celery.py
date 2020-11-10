@@ -21,6 +21,10 @@ app.conf.beat_schedule = {
    'every-10-seconds': {
         'task': 'scraper.tasks.task_scraper',
         'schedule': 10,
+    },
+   'every-12-seconds': {
+        'task': 'scraper.tasks.save_to_db',
+        'schedule': 12,
     }
 }
 
