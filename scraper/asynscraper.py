@@ -77,7 +77,7 @@ async def runner():
     await asyncio.gather(tasks)
 
 
-# saving data to database
+# saving scraped data to database
 def save_data():
     for dicts in commitframe:
         Commits.objects.bulk_create([Commits(
