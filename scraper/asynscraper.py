@@ -2,25 +2,22 @@ import asyncio
 from aiohttp import ClientSession
 from asyncio import Semaphore
 from bs4 import BeautifulSoup
-import pandas as pd
-from asgiref.sync import sync_to_async
+
 
 from .models import Repository, Commits
 
-# fetch function with Semaphore
-
-
-"""
-The value of these semaphores is that they allow us 
-to protect resources from being overused.
-"""
-
-# and parsing data we need with bs4
+# global variables to evade coroutine objects returned by async functions.
+'''
+Global variables were created in order to evade coroutine objects to be returned,
+thus we can avoid bugs of native Django behavior while working with async functions,
+while interacting with database models.
+'''
 
 commitframe = []
 list_of_urls = []
-print(list_of_urls)
 
+
+# function get_url retrieves lists of url
 
 def get_url():
     urls = [field for field in Repository.objects.values_list('url', flat=True)]
@@ -28,7 +25,15 @@ def get_url():
         list_of_urls.append(url)
 
 
-async def fetch_with_sem():
+# fetch function with Semaphore
+"""
+The value of these semaphores is that they allow us 
+to protect resources from being overused.
+"""
+# and parsing data we need with bs4
+
+
+async def fetch_with_sem(counter=0):
     header = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
                             'Chrome/86.0.4240.111 Safari/537.36'}
 
@@ -53,22 +58,26 @@ async def fetch_with_sem():
                     timestamp = (data.find('relative-time', class_='no-wrap').get_text()
                                  if data.find('relative-time', class_='no-wrap') else None)
 
+                    counter += 1
+
                     df = {
                         'title': title,
                         'message': message,
                         'timestamp': timestamp,
                     }
-                    print('---> First dict --->', df)
 
                     commitframe.append(df)
+                print(f'Total commits saved: {counter}')
 
 
+# runner function for async web scraper
 async def runner():
     tasks = asyncio.create_task(
         fetch_with_sem())
     await asyncio.gather(tasks)
 
 
+# saving data to database
 def save_data():
     for dicts in commitframe:
         Commits.objects.bulk_create([Commits(

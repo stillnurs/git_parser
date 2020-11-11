@@ -5,17 +5,12 @@ class Repository(models.Model):
     title = models.CharField(max_length=255, db_index=True)
     url = models.URLField()
 
-    # def append(self):
-    #     new_id = self.id
-    #     self.string_id = str(new_id) + '/commits'
-    #     super(Repository, self).save()
-
     class Meta:
         verbose_name = "Репозиторий"
         verbose_name_plural = "Репозитории"
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 
 class Commits(models.Model):
@@ -25,8 +20,8 @@ class Commits(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Коммиты'
-        verbose_name_plural = "Коммиты"
+        verbose_name = 'коммиты'
+        verbose_name_plural = "коммиты"
 
     def __str__(self):
-        return self.title
+        return str(self.title)

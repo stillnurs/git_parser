@@ -3,7 +3,7 @@ from datetime import time
 import time
 
 from celery import shared_task
-from .asyncraper import runner, save_data, get_url
+from .asynscraper import runner, save_data, get_url
 
 
 @shared_task

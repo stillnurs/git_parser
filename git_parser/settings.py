@@ -133,3 +133,7 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'json']
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_TIMEZONE = 'Asia/Bishkek'
+
+
+# Max number of fields allowed:
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
