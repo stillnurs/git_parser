@@ -1,6 +1,6 @@
 # Web scraping application on Django (scraping Git-Hub repository commits)
 ##### PostgreSQL Database integration
-## Using Redis, Selery, BS4, Asyncio, Aiohttp, PostgreSQL
+## Using Redis, Selery, BS4, Asyncio, Aiohttp, PostgreSQL, DjangoREST framework
 
 ## To run this application.
 ##### Clone the repository
